@@ -30,12 +30,58 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <!-- Left Side Of Navbar -->
                     <ul class="navbar-nav me-auto">
+                        @auth
+                            <li class="nav-item">
+                                <a class="nav-link {{ request()->is('home') ? 'active fw-bold' : '' }}"
+                                   href="{{ route('home') }}">Dashboard</a>
+                            </li>
 
+                            <!-- Dropdown Notes -->
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle {{ request()->is('notes*') ? 'active fw-bold' : '' }}"
+                                   href="#" role="button" data-bs-toggle="dropdown">
+                                    Notes
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li>
+                                        <a class="dropdown-item" href="{{ route('notes.index') }}">
+                                            Mes notes
+                                        </a>
+                                    </li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li>
+                                        <a class="dropdown-item" href="{{ route('notes.create') }}">
+                                            + Nouvelle note
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+
+                            <!-- Dropdown Posts -->
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle {{ request()->is('posts*') ? 'active fw-bold' : '' }}"
+                                   href="#" role="button" data-bs-toggle="dropdown">
+                                    Posts
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li>
+                                        <a class="dropdown-item" href="{{ route('posts.index') }}">
+                                            Mes posts
+                                        </a>
+                                    </li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li>
+                                        <a class="dropdown-item" href="{{ route('posts.create') }}">
+                                            + Nouveau post
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                        @endauth
                     </ul>
 
                     <!-- Right Side Of Navbar -->
                     <ul class="navbar-nav ms-auto">
-                        <!-- Authentication Links -->
                         @guest
                             @if (Route::has('login'))
                                 <li class="nav-item">

@@ -49,12 +49,12 @@
             </div>
 
             {{-- Mes posts --}}
-            <div class="card mb-4">
+            <div id="posts" class="card mb-4">
                 <div class="card-header">Mes posts</div>
                 <div class="card-body">
 
                     {{-- Formulaire d'ajout --}}
-                    <form action="{{ route('posts.store') }}" method="POST" class="mb-3">
+                    <form id="nouveau-post" action="{{ route('posts.store') }}" method="POST" class="mb-3">
                         @csrf
                         <div class="mb-2">
                             <textarea name="content" class="form-control @error('content') is-invalid @enderror"
