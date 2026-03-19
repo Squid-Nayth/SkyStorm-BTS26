@@ -10,7 +10,6 @@ class NoteSeeder extends Seeder
 {
     public function run(): void
     {
-        // On récupère l'utilisateur de test créé par DatabaseSeeder
         $user = User::where('email', 'test@example.com')->first();
 
         if (!$user) {
