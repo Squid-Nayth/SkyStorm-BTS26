@@ -23,6 +23,9 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home');
+        $notes = auth()->user()->notes()->latest()->get();
+        $posts = auth()->user()->posts()->latest()->get();
+
+        return view('home', compact('notes', 'posts'));
     }
 }
