@@ -55,4 +55,26 @@ class User extends Authenticatable
     {
         return $this->hasMany(Post::class);
     }
+
+    // Les utilisateurs que JE suis
+    public function following()
+    {
+        return $this->belongsToMany(
+            User::class,
+            'followers',   // table pivot
+            'follower_id', // clé étrangère de CE modèle
+            'following_id' // clé étrangère du modèle cible
+        );
+    }
+
+    // Les utilisateurs qui ME suivent
+    public function followers()
+    {
+        return $this->belongsToMany(
+            User::class,
+            'followers',   // table pivot
+            'following_id', // clé étrangère de CE modèle
+            'follower_id'   // clé étrangère du modèle cible
+        );
+    }
 }

@@ -2,30 +2,33 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Post;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
     public function __construct()
     {
         $this->middleware('auth');
     }
 
-    /**
-     * Show the application dashboard.
-     *
-     * @return \Illuminate\Contracts\Support\Renderable
-     */
     public function index()
     {
-        $notes = auth()->user()->notes()->latest()->get();
-        $posts = auth()->user()->posts()->latest()->get();
+        $user = auth()->user();
 
-        return view('home', compact('notes', 'posts'));
+        $followingIds = $user->following()->pluck('users.id');
+        $feedIds = $followingIds->push($user->id);
+
+        $posts = Post::whereIn('user_id', $feedIds)
+            ->with('user')
+            ->latest()
+            ->get();
+
+        $notes = $user->notes()->latest()->get();
+
+        $suggestions = User::whereNotIn('id', $feedIds)->limit(5)->get();
+
+        return view('home', compact('posts', 'notes', 'suggestions'));
     }
 }

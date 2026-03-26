@@ -31,7 +31,7 @@ class PostController extends Controller
 
         auth()->user()->posts()->create($request->only('content'));
 
-        return redirect()->route('posts.index')->with('status', 'Post publié !');
+        return back()->with('status', 'Post publié !');
     }
 
     public function edit(Post $post)
@@ -64,6 +64,6 @@ class PostController extends Controller
         }
         $post->delete();
 
-        return redirect()->route('posts.index')->with('status', 'Post supprimé.');
+        return back()->with('status', 'Post supprimé.');
     }
 }
