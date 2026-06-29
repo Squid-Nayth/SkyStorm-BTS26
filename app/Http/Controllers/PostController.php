@@ -14,7 +14,19 @@ class PostController extends Controller
 
     public function index()
     {
-        $posts = auth()->user()->posts()->latest()->get();
+        $posts = auth()->user()->posts()
+            ->with(['user', 'comments.user', 'likes', 'favoritedBy'])
+            ->withCount([
+                'likes',
+                'comments',
+                'favoritedBy',
+                'reports as active_reports_count' => function ($query) {
+                    $query->whereIn('status', ['pending', 'accepted']);
+                },
+            ])
+            ->latest()
+            ->get();
+
         return view('posts.index', compact('posts'));
     }
 
@@ -26,7 +38,7 @@ class PostController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'content' => 'required|max:500',
+            'content' => 'required|max:255',
         ]);
 
         auth()->user()->posts()->create($request->only('content'));
@@ -49,7 +61,7 @@ class PostController extends Controller
         }
 
         $request->validate([
-            'content' => 'required|max:500',
+            'content' => 'required|max:255',
         ]);
 
         $post->update($request->only('content'));

@@ -12,13 +12,13 @@
 
                         <div class="mb-3">
                             <label for="content" class="form-label">Contenu</label>
-                            <textarea name="content" id="content" rows="5"
+                            <textarea name="content" id="content" rows="5" maxlength="255"
                                       class="form-control @error('content') is-invalid @enderror"
                                       placeholder="Quoi de neuf ?" required>{{ old('content') }}</textarea>
                             @error('content')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
-                            <small class="text-muted">500 caractères maximum</small>
+                            <small class="text-muted">255 caractères maximum</small>
                         </div>
 
                         <div class="d-flex gap-2">

@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ config('app.name', 'SkyStorm') }}</title>
     <link rel="icon" type="image/png" href="{{ asset('favicon-skystorm.png') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { display: flex; flex-direction: column; height: 100vh; font-family: sans-serif; }
@@ -45,6 +46,7 @@
             border-color: #3b6fd4;
         }
         .nav-links a.btn-primary:hover { background: #2f5bb8; border-color: #2f5bb8; }
+        .nav-links a i { margin-right: 0.45rem; }
 
         .hero {
             flex: 1;
@@ -65,14 +67,16 @@
             <span class="sky">Sky</span><span class="storm">Storm</span>
         </a>
         <div class="nav-links">
+            <a href="{{ route('explore') }}"><i class="bi bi-compass"></i>Explorer</a>
+            <a href="{{ route('members.index') }}"><i class="bi bi-people"></i>Membres</a>
             @auth
-                <a href="{{ url('/home') }}" class="btn-primary">Dashboard</a>
+                <a href="{{ url('/home') }}" class="btn-primary"><i class="bi bi-speedometer2"></i>Dashboard</a>
             @else
                 @if (Route::has('login'))
-                    <a href="{{ route('login') }}">Connexion</a>
+                    <a href="{{ route('login') }}"><i class="bi bi-box-arrow-in-right"></i>Connexion</a>
                 @endif
                 @if (Route::has('register'))
-                    <a href="{{ route('register') }}" class="btn-primary">S'inscrire</a>
+                    <a href="{{ route('register') }}" class="btn-primary"><i class="bi bi-person-plus"></i>S'inscrire</a>
                 @endif
             @endauth
         </div>

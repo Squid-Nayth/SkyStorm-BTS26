@@ -1,74 +1,69 @@
-<p align="center"><img src="https://raw.githubusercontent.com/Max13/SkyStorm/master/resources/img/logo.png" width="200" alt="SkyStorm Logo"></p>
-
 # SkyStorm
 
-SkyStorm est une réplique allégée de Twitter/X développée en Laravel 12 dans un contexte pédagogique pour la préparation à l’épreuve E6 du BTS SIO option SLAM. Le projet est construit en direct avec la classe afin d’illustrer un cycle complet de développement : conception, modélisation, implémentation et déploiement.
+Projet Laravel de reseau social realise dans un contexte BTS SIO / SLAM.
 
-## Objectifs pédagogiques
+## Lancer le projet
 
-* Comprendre l’architecture MVC de Laravel
-* Manipuler l’authentification avec Laravel UI (Bootstrap)
-* Concevoir un MCD et le traduire en base de données relationnelle
-* Gérer les relations n-n et 1-n avec Eloquent
-* Implémenter des fonctionnalités sociales (posts, likes, abonnements)
-* Structurer un projet Git professionnel
-
-## Stack technique
-
-* PHP 8.x
-* Laravel 12
-* Laravel UI (Bootstrap)
-* MySQL / MariaDB
-* Eloquent ORM
-* Blade
-
-## Fonctionnalités principales
-
-* Inscription / connexion utilisateur
-* Création, modification et suppression de posts
-* Système de suivi entre utilisateurs
-* Système de likes sur les posts
-* Fil d’actualité simplifié
-
-## Modélisation des données
-
-Le modèle de données repose sur deux entités principales : `users` et `posts`, reliées par des relations sociales.
-
-### MCD (Mocodo)
-
-```mocodo
-FOLLOW, 0N Users, 0N Users
-Users: id_user, name, email, password, created_at
-LIKE, 0N Users, 0N Posts
-
-:
-POST, 0N Users, 11 Posts
-Posts: id_post, content, created_at
-```
-
-## Installation
+Installer les dependances une premiere fois :
 
 ```bash
-git clone https://github.com/Max13/SkyStorm.git
-cd SkyStorm
-composer run-script setup
-```
-
-Effectuer les configurations (base de données, URL, nom de l'app, etc…) dans le fichier `.env`, puis exécuter :
-
-```bash
+composer install
+npm install
 php artisan migrate
-php artisan serve
 ```
 
-## Structure du projet
+Puis au quotidien :
 
-* `app/Models` : modèles Eloquent
-* `app/Http/Controllers` : logique métier
-* `resources/views` : templates Blade
-* `database/migrations` : schéma de base de données
-* `routes/web.php` : routes principales
+```bash
+php artisan serve --host=127.0.0.1 --port=8000
+```
 
-## Licence
+Dans un autre terminal :
 
-Projet pédagogique. Utilisation libre dans un cadre scolaire ou de formation.
+```bash
+npm run dev -- --host 127.0.0.1 --port 5173
+```
+
+Application :
+
+- `http://127.0.0.1:8000`
+
+## Lancer les tests
+
+```bash
+php artisan test
+```
+
+## Email en local
+
+Le projet gere l'envoi des emails pour :
+
+- le code de reinitialisation du mot de passe
+- le code de verification lors de l'inscription
+
+Par defaut, le projet est configure en mode `log` dans `.env` :
+
+```env
+MAIL_MAILER=log
+MAIL_SCHEME=null
+MAIL_HOST=127.0.0.1
+MAIL_PORT=2525
+MAIL_USERNAME=null
+MAIL_PASSWORD=null
+MAIL_FROM_ADDRESS="hello@example.com"
+MAIL_FROM_NAME="${APP_NAME}"
+```
+
+Dans ce mode, aucun vrai email n'est envoye : Laravel ecrit simplement le contenu dans le fichier de log.
+
+Pour lire les emails generes :
+
+```bash
+tail -f storage/logs/laravel.log
+```
+
+## Documentation courte
+
+Une documentation plus claire du projet est disponible ici :
+
+- [docs/PROJET.md](/Users/nkombelasseninathanmichel/Documents/GitHub/SkyStorm-BTS26/docs/PROJET.md)

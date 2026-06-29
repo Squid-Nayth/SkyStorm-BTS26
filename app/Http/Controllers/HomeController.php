@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Post;
 use App\Models\User;
-use Illuminate\Http\Request;
 
 class HomeController extends Controller
 {
@@ -21,7 +20,15 @@ class HomeController extends Controller
         $feedIds = $followingIds->push($user->id);
 
         $posts = Post::whereIn('user_id', $feedIds)
-            ->with('user')
+            ->with(['user', 'comments.user', 'likes', 'favoritedBy'])
+            ->withCount([
+                'likes',
+                'comments',
+                'favoritedBy',
+                'reports as active_reports_count' => function ($query) {
+                    $query->whereIn('status', ['pending', 'accepted']);
+                },
+            ])
             ->latest()
             ->get();
 
@@ -29,6 +36,16 @@ class HomeController extends Controller
 
         $suggestions = User::whereNotIn('id', $feedIds)->limit(5)->get();
 
-        return view('home', compact('posts', 'notes', 'suggestions'));
+        $postsStats = $user->posts()->withCount('likes')->get();
+
+        $stats = [
+            'followers' => $user->followers()->count(),
+            'posts' => $user->posts()->count(),
+            'likes_received' => $postsStats->sum('likes_count'),
+            'best_post_likes' => $postsStats->max('likes_count') ?? 0,
+            'favorites' => $user->favoritePosts()->count(),
+        ];
+
+        return view('home', compact('posts', 'notes', 'suggestions', 'stats'));
     }
 }

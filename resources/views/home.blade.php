@@ -6,23 +6,48 @@
     {{-- ===== FEED PRINCIPAL ===== --}}
     <div class="col-lg-8">
 
-        @if (session('status'))
-            <div class="alert alert-success alert-dismissible fade show mb-3" role="alert" style="border-radius: 0.75rem;">
-                {{ session('status') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        <div class="row g-3 mb-3">
+            <div class="col-sm-6 col-xl-4">
+                <div class="ss-card p-3">
+                    <div class="small text-muted ss-icon-label"><i class="bi bi-people"></i>Abonnés</div>
+                    <div class="fs-4 fw-bold">{{ $stats['followers'] }}</div>
+                </div>
             </div>
-        @endif
+            <div class="col-sm-6 col-xl-4">
+                <div class="ss-card p-3">
+                    <div class="small text-muted ss-icon-label"><i class="bi bi-grid-3x3-gap"></i>Mes publications</div>
+                    <div class="fs-4 fw-bold">{{ $stats['posts'] }}</div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-xl-4">
+                <div class="ss-card p-3">
+                    <div class="small text-muted ss-icon-label"><i class="bi bi-hand-thumbs-up"></i>Likes reçus</div>
+                    <div class="fs-4 fw-bold">{{ $stats['likes_received'] }}</div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-xl-6">
+                <div class="ss-card p-3">
+                    <div class="small text-muted ss-icon-label"><i class="bi bi-trophy"></i>Record sur un post</div>
+                    <div class="fs-4 fw-bold">{{ $stats['best_post_likes'] }}</div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-xl-6">
+                <div class="ss-card p-3">
+                    <div class="small text-muted ss-icon-label"><i class="bi bi-bookmark-heart"></i>Favoris enregistrés</div>
+                    <div class="fs-4 fw-bold">{{ $stats['favorites'] }}</div>
+                </div>
+            </div>
+        </div>
 
         {{-- Compositeur de post --}}
         <div class="ss-card p-3 mb-3">
-            @php $initials = strtoupper(substr(auth()->user()->name, 0, 2)); @endphp
             <form action="{{ route('posts.store') }}" method="POST">
                 @csrf
                 <div class="d-flex align-items-start gap-3">
-                    <div class="ss-avatar text-white flex-shrink-0" style="background: #3b6fd4; margin-top: 2px;">
-                        {{ $initials }}
+                    <div style="margin-top: 2px;">
+                        @include('users._avatar', ['user' => auth()->user(), 'size' => 38])
                     </div>
-                    <textarea name="content" rows="2" placeholder="Quoi de neuf ?"
+                    <textarea name="content" rows="2" placeholder="Quoi de neuf ?" maxlength="255"
                               class="form-control border-0 @error('content') is-invalid @enderror"
                               style="resize: none; background: #f9fafb; border-radius: 0.5rem; font-family: inherit;">{{ old('content') }}</textarea>
                 </div>
@@ -32,7 +57,7 @@
                 <div class="d-flex justify-content-end mt-2">
                     <button type="submit" class="btn btn-sm text-white"
                             style="background: #3b6fd4; border-radius: 9999px; padding: 0.3rem 1.4rem; border: none; font-family: inherit;">
-                        Publier
+                        <span class="ss-icon-label"><i class="bi bi-send"></i>Publier</span>
                     </button>
                 </div>
             </form>
@@ -40,40 +65,7 @@
 
         {{-- Fil des posts --}}
         @forelse($posts as $post)
-            @php
-                $palette = ['#3b6fd4','#10b981','#f59e0b','#ef4444','#8b5cf6','#ec4899'];
-                $avatarColor = $palette[$post->user->id % count($palette)];
-                $postInitials = strtoupper(substr($post->user->name, 0, 2));
-                $isOwn = $post->user_id === auth()->id();
-            @endphp
-            <div class="ss-card p-3 mb-3">
-                <div class="d-flex justify-content-between align-items-start">
-                    <div class="d-flex gap-3">
-                        <div class="ss-avatar text-white flex-shrink-0" style="background: {{ $avatarColor }};">
-                            {{ $postInitials }}
-                        </div>
-                        <div>
-                            <div class="fw-semibold" style="color: #1f2937; line-height: 1.3;">{{ $post->user->name }}</div>
-                            <div class="small" style="color: #9ca3af;">{{ $post->created_at->format('d/m/Y · H:i') }}</div>
-                        </div>
-                    </div>
-                    @if($isOwn)
-                        <div class="d-flex gap-2 flex-shrink-0">
-                            <a href="{{ route('posts.edit', $post) }}"
-                               class="btn btn-sm btn-outline-secondary py-0 px-2"
-                               style="font-size: 0.75rem; border-radius: 0.4rem;">Modifier</a>
-                            <form action="{{ route('posts.destroy', $post) }}" method="POST"
-                                  onsubmit="return confirm('Supprimer ce post ?')">
-                                @csrf @method('DELETE')
-                                <button type="submit"
-                                        class="btn btn-sm btn-outline-danger py-0 px-2"
-                                        style="font-size: 0.75rem; border-radius: 0.4rem;">Supprimer</button>
-                            </form>
-                        </div>
-                    @endif
-                </div>
-                <p class="mt-2 mb-0" style="color: #374151; line-height: 1.6;">{{ $post->content }}</p>
-            </div>
+            @include('posts._card', ['post' => $post])
         @empty
             <div class="ss-card p-4 text-center" style="color: #9ca3af;">
                 Aucun post pour l'instant. Suivez des utilisateurs ou publiez votre premier post !
@@ -92,7 +84,7 @@
                 <a href="{{ route('notes.create') }}"
                    class="btn btn-sm text-white"
                    style="background: #3b6fd4; border-radius: 9999px; font-size: 0.75rem; padding: 0.2rem 0.8rem; border: none;">
-                    + Nouvelle
+                    <span class="ss-icon-label"><i class="bi bi-plus-lg"></i>Nouvelle</span>
                 </a>
             </div>
 
@@ -122,25 +114,31 @@
             @endif
         </div>
 
+        <div class="ss-card p-3 mb-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h6 class="fw-bold mb-1" style="color: #1f2937;">Mes favoris</h6>
+                    <div class="small text-muted">
+                        Liste {{ auth()->user()->favorite_posts_public ? 'publique' : 'privée' }}
+                    </div>
+                </div>
+                <a href="{{ route('favorites.index') }}" class="btn btn-sm btn-outline-success">Ouvrir</a>
+            </div>
+        </div>
+
         {{-- Suggestions d'utilisateurs à suivre --}}
         @if($suggestions->count() > 0)
         <div class="ss-card p-3">
             <h6 class="fw-bold mb-3" style="color: #1f2937;">Suggestions</h6>
 
             @foreach($suggestions as $suggestion)
-                @php
-                    $palette2 = ['#3b6fd4','#10b981','#f59e0b','#ef4444','#8b5cf6','#ec4899'];
-                    $sugColor = $palette2[$suggestion->id % count($palette2)];
-                    $sugInitials = strtoupper(substr($suggestion->name, 0, 2));
-                @endphp
                 <div class="d-flex align-items-center gap-2 {{ !$loop->last ? 'mb-3' : '' }}">
-                    <div class="ss-avatar text-white flex-shrink-0"
-                         style="background: {{ $sugColor }}; width: 34px; height: 34px; font-size: 0.75rem;">
-                        {{ $sugInitials }}
-                    </div>
+                    @include('users._avatar', ['user' => $suggestion, 'size' => 34])
                     <div class="flex-grow-1" style="min-width: 0;">
                         <div class="small fw-semibold text-truncate" style="color: #1f2937;">
-                            {{ $suggestion->name }}
+                            <a href="{{ route('users.show', $suggestion) }}" class="text-decoration-none" style="color: inherit;">
+                                {{ $suggestion->name }}
+                            </a>
                         </div>
                     </div>
                     <form action="{{ route('users.follow', $suggestion) }}" method="POST" class="flex-shrink-0">
@@ -148,7 +146,7 @@
                         <button type="submit"
                                 class="btn btn-sm"
                                 style="background: #fff; border: 1.5px solid #3b6fd4; color: #3b6fd4; border-radius: 0.5rem; font-size: 0.8rem; padding: 0.2rem 0.7rem; white-space: nowrap; font-family: inherit;">
-                            + Suivre
+                            <span class="ss-icon-label"><i class="bi bi-person-plus"></i>Suivre</span>
                         </button>
                     </form>
                 </div>
